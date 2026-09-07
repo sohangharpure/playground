@@ -1,0 +1,64 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: redis-leader-lock-demo
+
+app:
+  leader-lock:
+    # Single-node Redis is the default local configuration.
+    redis-url: ${REDIS_URL:redis://localhost:6379}
+    deployment-mode: ${REDIS_DEPLOYMENT_MODE:single}
+    node-addresses: ${REDIS_NODE_ADDRESSES:}
+    cluster-scan-interval: ${REDIS_CLUSTER_SCAN_INTERVAL:5000}
+    tls-enabled: ${REDIS_TLS_ENABLED:false}
+    username: ${REDIS_USERNAME:}
+    password: ${REDIS_PASSWORD:}
+    truststore-path: ${REDIS_TRUSTSTORE_PATH:}
+    truststore-password: ${REDIS_TRUSTSTORE_PASSWORD:}
+    keystore-path: ${REDIS_KEYSTORE_PATH:}
+    keystore-password: ${REDIS_KEYSTORE_PASSWORD:}
+    keystore-type: ${REDIS_KEYSTORE_TYPE:JKS}
+    ssl-endpoint-identification: ${REDIS_SSL_ENDPOINT_IDENTIFICATION:true}
+    key: ${LEADER_LOCK_KEY:app:leader-lock}
+    retry-delay: ${LEADER_LOCK_RETRY_DELAY:5s}
+    confirmation-interval: ${LEADER_LOCK_CONFIRMATION_INTERVAL:3s}
+    shutdown-timeout: ${LEADER_LOCK_SHUTDOWN_TIMEOUT:5s}
+    instance-id: ${INSTANCE_ID:}
+
+    # Redis Cluster example. Uncomment these settings and provide reachable nodes.
+    # deployment-mode: cluster
+    # node-addresses:
+    #   - redis://redis-node-1:6379
+    #   - redis://redis-node-2:6379
+    #   - redis://redis-node-3:6379
+    # redis-url: redis://redis-node-1:6379
+
+  worker:
+    interval: ${LEADER_WORK_INTERVAL:2s}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      group:
+        readiness:
+          include: readinessState,leadership,lockBackend
+      show-details: always
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true

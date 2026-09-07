@@ -1,0 +1,29 @@
+# Gradle
+.gradle/
+build/
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+
+# Java and application output
+*.class
+*.jar
+*.war
+*.log
+hs_err_pid*
+replay_pid*
+!gradle/wrapper/gradle-wrapper.jar
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+
+# OS files
+.DS_Store
+Thumbs.db

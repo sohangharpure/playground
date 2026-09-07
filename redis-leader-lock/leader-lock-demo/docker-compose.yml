@@ -1,0 +1,44 @@
+services:
+  redis:
+    image: redis:7.4-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  app-one:
+    build:
+      context: ..
+      dockerfile: leader-lock-demo/Dockerfile
+    environment:
+      REDIS_URL: redis://redis:6379
+      INSTANCE_ID: app-one
+      SERVER_PORT: 8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  app-two:
+    build:
+      context: ..
+      dockerfile: leader-lock-demo/Dockerfile
+    environment:
+      REDIS_URL: redis://redis:6379
+      INSTANCE_ID: app-two
+      SERVER_PORT: 8080
+    ports:
+      - "8081:8080"
+    depends_on:
+      redis:
+        condition: service_healthy
+
+volumes:
+  redis-data:

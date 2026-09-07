@@ -1,0 +1,40 @@
+name: Build Demo Container
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    paths:
+      - "leader-lock-demo/Dockerfile"
+      - "leader-lock-demo/**"
+      - "leader-lock-library/**"
+      - "build.gradle"
+      - "settings.gradle"
+      - ".dockerignore"
+      - ".github/workflows/docker.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  docker-build:
+    name: Build demo image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: leader-lock-demo/Dockerfile
+          push: false
+          tags: redis-leader-lock-demo:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
