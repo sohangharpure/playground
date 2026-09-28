@@ -1,0 +1,46 @@
+spring:
+  application:
+    name: trading-pipeline
+  threads:
+    virtual:
+      enabled: true
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      acks: all
+      properties:
+        enable.idempotence: true
+        linger.ms: 5
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: ${KAFKA_CONSUMER_GROUP:trading-pipeline-persistor}
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      max-poll-records: ${KAFKA_MAX_POLL_RECORDS:250}
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.value.default.type: com.example.tradingpipeline.model.TradeEvent
+        spring.json.trusted.packages: com.example.tradingpipeline.model
+        max.partition.fetch.bytes: 2097152
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost:27017/trading}
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+server:
+  port: ${SERVER_PORT:8080}
+
+pipeline:
+  topic: ${TRADING_TOPIC:trading-events}
+  mongo-collection: ${TRADING_MONGO_COLLECTION:trades}
+  listener-concurrency: ${PERSISTENCE_CONCURRENCY:3}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics

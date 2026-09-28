@@ -1,0 +1,22 @@
+.gradle/
+build/
+out/
+*.iml
+
+# Java compiler and JVM output
+*.class
+hs_err_pid*
+replay_pid*
+
+# IDE metadata
+.idea/
+.classpath
+.project
+.settings/
+bin/
+/nbproject/private/
+
+# Logs and OS metadata
+*.log
+.DS_Store
+Thumbs.db

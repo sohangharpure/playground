@@ -1,0 +1,14 @@
+spring:
+  kafka:
+    bootstrap-servers: kafka:29092
+  data:
+    mongodb:
+      uri: mongodb://mongo:27017/trading
+    redis:
+      host: redis
+      port: 6379
+
+pipeline:
+  topic: trading-events
+  mongo-collection: trades
+  listener-concurrency: 3
